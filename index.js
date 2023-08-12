@@ -1,35 +1,37 @@
 const canvas = document.querySelector("canvas");
 const context = canvas.getContext("2d");
 
-const SPEED = 0.01; // px / ms
+const paintOffsetCircles = (timestamp) => {
+  let radius = 10;
+  const CIRCLE_GAP = 35;
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
 
-const paintStaticVerticals = () => {
-  const GAP_BETWEEN_VERTICALS = 20; // px
-  let x = Math.min(canvas.width, GAP_BETWEEN_VERTICALS) - GAP_BETWEEN_VERTICALS;
-  while (x < canvas.width + GAP_BETWEEN_VERTICALS) {
-    context.beginPath();
-    context.lineWidth = 5;
-    context.strokeStyle = "silver";
-    context.moveTo(x, 0);
-    context.lineTo(x, canvas.height);
-    context.stroke();
-    x += GAP_BETWEEN_VERTICALS;
-  }
-};
-
-const paintMovingVerticals = (timestamp) => {
-  const GAP_BETWEEN_VERTICALS = 21; // px
-  let x =
-    ((SPEED * timestamp) % Math.min(canvas.width, GAP_BETWEEN_VERTICALS)) -
-    GAP_BETWEEN_VERTICALS;
-  while (x < canvas.width + GAP_BETWEEN_VERTICALS) {
+  const xOffset = 30 * Math.sin(timestamp / 500);
+  const yOffset = 30 * Math.cos(timestamp / 500);
+  // This is a deliberate overestimate upper bound
+  // If we were being precise we'd use Pythagoras
+  const radiusMax = canvas.width + canvas.height;
+  while (radius < radiusMax) {
     context.beginPath();
     context.lineWidth = 10;
-    context.strokeStyle = "dimgray";
-    context.moveTo(x, canvas.height / 2);
-    context.lineTo(x, canvas.height);
+    context.strokeStyle = "white";
+    context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     context.stroke();
-    x += GAP_BETWEEN_VERTICALS;
+
+    context.beginPath();
+    context.lineWidth = 10;
+    context.strokeStyle = "red";
+    context.arc(centerX + xOffset, centerY + yOffset, radius, 0, 2 * Math.PI);
+    context.stroke();
+
+    context.beginPath();
+    context.lineWidth = 10;
+    context.strokeStyle = "blue";
+    context.arc(centerX - xOffset, centerY - yOffset, radius, 0, 2 * Math.PI);
+    context.stroke();
+
+    radius += CIRCLE_GAP;
   }
 };
 
@@ -37,10 +39,7 @@ const step = (timestamp) => {
   canvas.height = window.innerHeight;
   canvas.width = window.innerWidth;
 
-  context.lineCap = "square";
-
-  paintStaticVerticals();
-  paintMovingVerticals(timestamp);
+  paintOffsetCircles(timestamp);
 
   window.requestAnimationFrame(step);
 };
