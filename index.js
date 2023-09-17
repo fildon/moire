@@ -7,8 +7,8 @@ const paintOffsetCircles = (timestamp) => {
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
 
-  const xOffset = 30 * Math.sin(timestamp / 500);
-  const yOffset = 30 * Math.cos(timestamp / 500);
+  const xOffset = 100 * Math.sin(timestamp / 500) * Math.sin(timestamp / 700);
+  const yOffset = 100 * Math.cos(timestamp / 500) * Math.sin(timestamp / 700);
   // This is a deliberate overestimate upper bound
   // If we were being precise we'd use Pythagoras
   const radiusMax = canvas.width + canvas.height;
